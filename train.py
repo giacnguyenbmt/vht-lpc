@@ -30,8 +30,6 @@ def parse_args():
 def main():
     args = parse_args()
 
-    # columns=['r', 'y', 'g']
-    
     train_data_gen = ImageDataGenerator(
                                 rotation_range=10,
                                 preprocessing_function=preprocessing_image,

@@ -1,7 +1,10 @@
+import random
+import time
+
 import albumentations as A
 import cv2
-import random
 import numpy as np
+
 
 def random_rotate_flip(img):
     rand_rota = random.randint(-1,1)
@@ -19,9 +22,18 @@ def random_rotate_flip(img):
     
     return img
 
+
+def horizontal_flip(img, p=0.5):
+    rand_flip = random.random()
+    if rand_flip < p:
+        img = cv2.flip(img, 1)
+    return img
+
+
 def distance(a, b):
     return np.sqrt((a[0]-b[0])**2+(a[1]-b[1])**2)
-    
+
+
 def random_spot(image):
     img = image.copy()
     if (random.randint(0,1)==1):
@@ -56,6 +68,7 @@ def random_spot(image):
         img = img.astype(np.uint8)
     return img
 
+
 def add_noise(img, r_c, c_c, color=255):
     row, col, _ = img.shape
     d = min(row, col)//1
@@ -66,6 +79,7 @@ def add_noise(img, r_c, c_c, color=255):
     img = img+filter
     img[np.where(img>255)] = 255
     return img
+
 
 def flip_image(image, raito=2, kind=0):
     h = int(image.shape[0]*raito)
@@ -83,6 +97,7 @@ def flip_image(image, raito=2, kind=0):
 
     return img_flip
 
+
 def crop_initalize_image(image, image_flip, kind=0):
     h, w, _ = image_flip.shape
     if kind==0: #"tl":
@@ -96,6 +111,7 @@ def crop_initalize_image(image, image_flip, kind=0):
 
     return img
 
+
 def get_random_color_value(kind):
     if kind==0: #'r':
         color = np.array([random.randint(20, 100), 0, 0], dtype=np.uint8)
@@ -106,6 +122,7 @@ def get_random_color_value(kind):
         color = np.array([0, random.randint(20, 100), 0], dtype=np.uint8)
 
     return color
+
 
 def random_glow(image):
     img = image.copy()
@@ -129,6 +146,7 @@ def random_glow(image):
         img = crop_initalize_image(image, img, kind=kind)
     return img
 
+
 def random_ir_light(image):
     if (random.randint(0,1)==1):
         p_value = random.randint(20, 30)
@@ -146,24 +164,29 @@ data_transform = A.Compose([
                             
                             # A.RandomSnow(p=0.2, snow_point_lower=0.1, snow_point_upper=0.9, brightness_coeff=1.2),
                             # A.RandomRain(p=0.2),
-                            A.MotionBlur(p=0.3, blur_limit=5),
+                            # A.MotionBlur(p=0.3, blur_limit=5),
                             
                             # A.RandomBrightnessContrast(p=1, brightness_limit=0.5, contrast_limit=0.8),
-                            A.ColorJitter(p=1, brightness=0.5, contrast=0.8, saturation=0.2, hue=0.1),
+                            A.ColorJitter(p=1, brightness=0.2, contrast=0.2, saturation=0.2, hue=0.05),
                             
-                            A.GaussNoise(p=0.5, var_limit=0.09),
+                            # A.GaussNoise(p=0.5, var_limit=0.09),
                           ])
 
-def preprocessing_image(x):
-    x = random_rotate_flip(x)
-    x = random_spot(x)
-    x = random_spot(x)
-    x = random_glow(x)
-    x = random_ir_light(x)
-    x = np.float32(x)
 
-    img = data_transform(image=x/255)['image']
+def preprocessing_image(img):
+    # img = random_rotate_flip(img)
+    img = horizontal_flip(img)
+    # img = random_spot(img)
+    # img = random_spot(img)
+    # img = random_glow(img)
+    img = random_ir_light(img)
+
+    img = data_transform(image=img)['image']
+
+    # img = np.float32(img)
+    # img = img / 255
     return img
+
 
 def load_weights_transfer(model_old, model_new, num_skip_layers):
     num_layers = len(model_old.layers)
@@ -175,3 +198,9 @@ def load_weights_transfer(model_old, model_new, num_skip_layers):
         for i in range(0, num_layers-num_skip_layers):
             model_new.layers[i].set_weights(model_old.layers[i].get_weights())
         return True
+
+
+if __name__ == '__main__':
+    img = cv2.imread('data/y.jpeg')
+    out_img = preprocessing_image(img)
+    cv2.imwrite('out.jpg', out_img)
