@@ -1,15 +1,13 @@
-from model import TrafficLightNetModel
-from utils import preprocessing_image, load_weights_transfer
+import argparse
+import os
+import glob
+
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-import pandas as pd
-import argparse
 
-import matplotlib.pyplot as plt
-import numpy as np
-import os
-import glob
+from model import TrafficLightNetModel
+from utils import preprocessing_image, load_weights_transfer, save_dataloader_img
 
 
 SEED = 999
@@ -85,7 +83,7 @@ def main():
         images = batch[0]
         labels = batch[1]
         for i in range(len(labels)):
-            plt.imsave('train_img_trans/'+str(i)+'_'+str(labels[i])+'.jpg',images[i])
+            save_dataloader_img('train_img_trans/'+str(i)+'_'+str(labels[i])+'.jpg',images[i])
         break
 
     # plot batch of val image with augment
@@ -98,7 +96,7 @@ def main():
         images = batch[0]
         labels = batch[1]
         for i in range(len(labels)):
-            plt.imsave('val_img_trans/'+str(i)+'_'+str(labels[i])+'.jpg',images[i])
+            save_dataloader_img('val_img_trans/'+str(i)+'_'+str(labels[i])+'.jpg',images[i])
         break
 
     his = tf_model.train_model(path_save=args.output_path, 

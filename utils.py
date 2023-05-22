@@ -198,6 +198,13 @@ def load_weights_transfer(model_old, model_new, num_skip_layers):
         for i in range(0, num_layers-num_skip_layers):
             model_new.layers[i].set_weights(model_old.layers[i].get_weights())
         return True
+    
+
+def save_dataloader_img(save_path, raw_img):
+    img = raw_img.copy()
+    img = img * 255
+    img = img.astype(np.unit8)
+    cv2.imwrite(save_path, img)
 
 
 if __name__ == '__main__':
