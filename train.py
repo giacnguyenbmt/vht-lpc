@@ -30,15 +30,18 @@ def main():
 
     train_data_gen = ImageDataGenerator(
                                 rotation_range=10,
-                                preprocessing_function=preprocessing_image,
+                                # preprocessing_function=preprocessing_image,
+                                preprocessing_function=None,
                                 data_format='channels_last',
-                                interpolation_order=1,
-                                dtype=None
+                                rescale=1. / 255,
                                 )
 
     val_data_gen = ImageDataGenerator(
                                 rotation_range=10,
-                                preprocessing_function=preprocessing_image,
+                                # preprocessing_function=preprocessing_image,
+                                preprocessing_function=None,
+                                data_format='channels_last',
+                                rescale=1. / 255,
                                 )
 
     train_generator=train_data_gen.flow_from_directory(
