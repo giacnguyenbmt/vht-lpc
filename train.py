@@ -21,6 +21,7 @@ def parse_args():
     parser.add_argument('--output_path', default="./models/Modeltflight_13_12_time0.h5", help='output model file path', type=str)
     parser.add_argument('--lr', default=0.001, help='learning rate', type=float)
     parser.add_argument('--batchsize', default=64, help='batch size', type=int)
+    parser.add_argument('--epoch', default=10, help='num epoch', type=int)
     args = parser.parse_args()
     return args
 
@@ -104,7 +105,7 @@ def main():
 
     his = tf_model.train_model(path_save=args.output_path, 
                                ds_train=train_generator, 
-                               epochs=100, 
+                               epochs=args.epoch, 
                                batch_size=args.batchsize, 
                                ds_val=valid_generator, 
                                lr=args.lr, 
