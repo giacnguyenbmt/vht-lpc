@@ -203,7 +203,7 @@ def load_weights_transfer(model_old, model_new, num_skip_layers):
 def save_dataloader_img(save_path, raw_img):
     img = raw_img.copy()
     img = img * 255
-    img = img.astype(np.unit8)
+    img = img.astype(np.uint8)
     cv2.imwrite(save_path, img)
 
 
