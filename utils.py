@@ -183,7 +183,7 @@ def preprocessing_image(img):
 
     img = data_transform(image=img)['image']
 
-    # img = np.float32(img)
+    img = np.float32(img)
     # img = img / 255
     return img
 
