@@ -204,7 +204,7 @@ def save_dataloader_img(save_path, raw_img):
     img = raw_img.copy()
     print(img[:3, :5, :])
     # img = img * 255
-    # img = img.astype(np.uint8)
+    img = img.astype(np.uint8)
     img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
     cv2.imwrite(save_path, img)
 
