@@ -6,7 +6,7 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-from model import TrafficLightNetModel
+from model import TrafficLightNetModel, LPCModel
 from utils import preprocessing_image, load_weights_transfer, save_dataloader_img
 
 
@@ -70,7 +70,8 @@ def main():
 
 
 
-    tf_model = TrafficLightNetModel((75, 75, 3), 4, 256)
+    # tf_model = TrafficLightNetModel((75, 75, 3), 4, 256)
+    tf_model = LPCModel((75, 75, 3), 4, 256)
     # model_old = tf.keras.models.load_model("/content/drive/MyDrive/Project/TrafficLight/Modeltflight_08_11_time1.h5")
     if args.model_path != None:
         tf_model.load_model(args.model_path)
