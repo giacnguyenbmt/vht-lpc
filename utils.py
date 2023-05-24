@@ -167,7 +167,7 @@ data_transform = A.Compose([
                             # A.MotionBlur(p=0.3, blur_limit=5),
                             
                             # A.RandomBrightnessContrast(p=1, brightness_limit=0.5, contrast_limit=0.8),
-                            A.ColorJitter(p=1, brightness=(0.8, 1.2), contrast=(0.8, 1.2), saturation=(0.8, 1.2), hue=0.05),
+                            A.ColorJitter(p=1, brightness=(0.8, 1.2), contrast=(0.8, 1.2), saturation=(0.8, 1.2), hue=0.00),
                             
                             # A.GaussNoise(p=0.5, var_limit=0.09),
                           ])
@@ -183,7 +183,7 @@ def preprocessing_image(img):
 
     img = data_transform(image=img)['image']
 
-    # img = np.float32(img)
+    img = np.float32(img)
     # img = img / 255
     return img
 
