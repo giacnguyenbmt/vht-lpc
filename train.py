@@ -18,8 +18,8 @@ def parse_args():
     parser.add_argument('--train_path', default="./data_total/train", help='train folder path', type=str)
     parser.add_argument('--val_path', default="./data_total/val", help='val folder path', type=str)
     parser.add_argument('--model_path', default=None, help='model file path', type=str)
-    parser.add_argument('--output_path', default="./models/Modeltflight_13_12_time0.h5", help='output model file path', type=str)
-    parser.add_argument('--lr', default=0.0005, help='learning rate', type=float)
+    parser.add_argument('--output_path', default="./models/model.h5", help='output model file path', type=str)
+    parser.add_argument('--lr', default=0.00001, help='learning rate', type=float)
     parser.add_argument('--batchsize', default=64, help='batch size', type=int)
     parser.add_argument('--epoch', default=10, help='num epoch', type=int)
     args = parser.parse_args()
@@ -72,11 +72,8 @@ def main():
 
     # tf_model = TrafficLightNetModel((75, 75, 3), 4, 256)
     tf_model = LPCModel((75, 75, 3), 4, 256)
-    # model_old = tf.keras.models.load_model("/content/drive/MyDrive/Project/TrafficLight/Modeltflight_08_11_time1.h5")
     if args.model_path != None:
         tf_model.load_model(args.model_path)
-
-    # load_weights_transfer(model_old, tf_model.model, 11)
 
     # plot batch of train image with augment
     files = glob.glob('train_img_trans/*')
