@@ -6,9 +6,12 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-from model import TrafficLightNetModel, LPCModel
+from model import VCR_model
 from utils import preprocessing_image, load_weights_transfer, save_dataloader_img
+from tensorflow.keras.callbacks import LearningRateScheduler
+from keras.callbacks import Callback, EarlyStopping, ReduceLROnPlateau
 
+import matplotlib.pyplot as plt
 
 SEED = 999
 AUTOTUNE = tf.data.experimental.AUTOTUNE
@@ -22,6 +25,7 @@ def parse_args():
     parser.add_argument('--lr', default=0.00001, help='learning rate', type=float)
     parser.add_argument('--batchsize', default=64, help='batch size', type=int)
     parser.add_argument('--epoch', default=10, help='num epoch', type=int)
+    parser.add_argument('--size', default=75, help='input size', type=int)
     args = parser.parse_args()
     return args
 
@@ -47,20 +51,21 @@ def main():
 
     train_generator=train_data_gen.flow_from_directory(
 							    directory = args.train_path,
-							    target_size=(75, 75),
+							    target_size=(args.size, args.size),
 							    color_mode='rgb',
-							    classes=['b', 'r', 'w', 'y'],
+							    classes=['BLACK', 'BLUE', 'BROWN', 'DIMGRAY', 'GREEN', 'ORANGE', 'RED', 'SILVER', 'WHITE', 'YELLOW'],
 							    class_mode='categorical',
 							    batch_size=args.batchsize,
 							    shuffle=True,
 							    seed=SEED,
 							    interpolation='nearest',
 							)
+
     valid_generator=val_data_gen.flow_from_directory(
 							    directory = args.val_path,
-							    target_size=(75, 75),
+							    target_size=(args.size, args.size),
 							    color_mode='rgb',
-							    classes=['b', 'r', 'w', 'y'],
+							    classes=['BLACK', 'BLUE', 'BROWN', 'DIMGRAY', 'GREEN', 'ORANGE', 'RED', 'SILVER', 'WHITE', 'YELLOW'],
 							    class_mode='categorical',
 							    batch_size=args.batchsize,
 							    shuffle=False,
@@ -68,10 +73,8 @@ def main():
 							    interpolation='nearest',
 							)
 
-
-
-    # tf_model = TrafficLightNetModel((75, 75, 3), 4, 256)
-    tf_model = LPCModel((75, 75, 3), 4, 256)
+    
+    tf_model = VCR_model((args.size, args.size, 3), 10, 256)
     if args.model_path != None:
         tf_model.load_model(args.model_path)
 
@@ -101,13 +104,28 @@ def main():
             save_dataloader_img('val_img_trans/'+str(i)+'_'+str(labels[i])+'.jpg',images[i])
         break
 
-    his = tf_model.train_model(path_save=args.output_path, 
+    history = tf_model.train_model(path_save=args.output_path, 
                                ds_train=train_generator, 
                                epochs=args.epoch, 
                                batch_size=args.batchsize, 
                                ds_val=valid_generator, 
-                               lr=args.lr, 
+                               lr=args.lr,
                                verbose=1)
 
-if __name__ == "__main__":
-    main()
+    # summarize history for accuracy
+    plt.plot(history.history['accuracy'])
+    plt.plot(history.history['val_accuracy'])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'val'], loc='upper left')
+    plt.savefig("accuracy_chart.png")
+
+    # summarize history for loss
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'val'], loc='upper left')
+    plt.savefig("loss_chart.png")
