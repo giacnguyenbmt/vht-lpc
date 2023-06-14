@@ -4,6 +4,7 @@ import numpy as np
 from tensorflow import keras
 from tensorflow.keras import layers
 
+'''
 # Model Class
 class TrafficLightNetModel():
   def __init__(self, input_shape, num_classes, size_se):
@@ -144,9 +145,9 @@ class TrafficLightNetModel():
 
   def save(self, path):
     self.model.save(path)  
+'''
 
-
-class LPCModel():
+class VCR_model():
   def __init__(self, input_shape, num_classes, size_se):
     super(LPCModel, self).__init__()
 
